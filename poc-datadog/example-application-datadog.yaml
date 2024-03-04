@@ -1,0 +1,28 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    tags.datadoghq.com/env: <env>
+    tags.datadoghq.com/service: <service>
+    tags.datadoghq.com/version: <version>
+spec:
+  template:
+    metadata:
+      labels:
+        tags.datadoghq.com/env: <env>
+        tags.datadoghq.com/service: <service>
+        tags.datadoghq.com/version: <version>
+        admission.datadoghq.com/enabled: "true"
+      annotations:
+        admission.datadoghq.com/python-lib.version: v2.6.5
+    spec:
+      containers:
+        - name: <CONTAINER_NAME>
+          image: <CONTAINER_IMAGE>/<TAG>
+          env:
+            - name: DD_PROFILING_ENABLED
+              value: "true"
+            - name: DD_LOGS_INJECTION
+              value: "true"
+            - name: DD_TRACE_SAMPLE_RATE
+              value: "1"
