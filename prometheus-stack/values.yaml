@@ -946,7 +946,7 @@ alertmanager:
 ## Using default values from https://github.com/grafana/helm-charts/blob/main/charts/grafana/values.yaml
 ##
 grafana:
-  # desabilitei a instalação do grafana pra somente rodar o Prometheus;
+  # Caso for utilizar a UI do Grafana, basta habilitar no modulo abaixo:
   enabled: false 
   namespaceOverride: ""
 
@@ -3719,7 +3719,7 @@ prometheus:
         metrics_path: "/metrics/"
       #- job_name: "blackbox-exporter" #Nome do job que vai coletar as métricas do primeiro exporter.
         #static_configs:
-          #- targets: ["blackbox-prometheus-blackbox-exporter.monitoring.svc:9115"] #Endereço do alvo monitorado, ou seja, "Balckbox".
+          #- targets: ["blackbox-prometheus-blackbox-exporter.monitoring.svc:9115"] #Endereço do alvo monitorado, ou seja, "Blackbox".
       - job_name: "mtbf-script" #Nome do job que vai coletar as métricas do primeiro exporter.
         static_configs:
           - targets: ["export-prometheus.mtbf-script.svc:5000"] #Endereço do alvo monitorado, ou seja, "Mtbf-Script".
