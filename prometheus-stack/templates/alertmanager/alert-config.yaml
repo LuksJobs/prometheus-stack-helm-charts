@@ -1,0 +1,45 @@
+apiVersion: v1
+kind: Secret
+metadata:
+  name: prometheus-slack-webhook
+  namespace: monitoring
+  labels:
+    release: prometheus-dev
+type: Opaque
+stringData:
+  # token passado como chave do secrets para utilizar na configuração do alert manager "api_url"
+  slack_webhook_url: 'https://hooks.slack.com/services/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'  
+
+---
+
+apiVersion: monitoring.coreos.com/v1alpha1
+kind: AlertmanagerConfig
+metadata:
+  name: global-alert-manager-configuration
+  namespace: monitoring
+  labels:
+    release: prometheus-dev
+spec:
+  route:
+    groupBy: ['alertname']
+    groupWait: 30s
+    groupInterval: 5m
+    repeatInterval: 1h
+    continue: true
+    receiver: 'slack-notification'
+    routes:
+      - receiver: 'slack-notification'
+        continue: true
+  receivers:
+    - name: slack-receiver
+      slackConfigs:
+        - channel: "grafana-dev-alerts" # nome do canal no slack para receeber as notificações
+          sendResolved: true
+          #iconEmoji: ":fire:"
+          title: "{{ range .Alerts }}{{ .Annotations.summary }}\n{{ end }}"
+          text: "<!channel> \nsummary: {{ .CommonAnnotations.summary }}\ndescription: {{ .CommonAnnotations.description }}\nmessage: {{ .CommonAnnotations.message }}"
+          apiURL:
+            name: prometheus-slack-webhook
+            key: slack_webhook_url
+          #title: "{{ range .Alerts }}{{ .Annotations.summary }}\n{{ end }}"
+          #text: "{{ range .Alerts }}{{ .Annotations.description }}\n{{ end }}"
