@@ -1,0 +1,24 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  labels:
+    release: prometheus-dev
+  name: celerov2model-hpa-replicas-rule
+  namespace: monitoring
+spec:
+  groups:
+    - name: celerov2model-hpa-replicas-rule
+      rules:
+        - alert: Celerov2ModelReplicasMismatch #nome do alerta vísivel no prometheus
+          for: 1m #Duração que o alerta permanece no estado pendente antes de disparar.
+          expr: | #Expressão PromQL para avaliar a condição do alerta.
+            avg(kube_horizontalpodautoscaler_status_current_replicas{namespace="celerofinance", horizontalpodautoscaler="celerov2-model"}) <
+            min(kube_horizontalpodautoscaler_spec_min_replicas{namespace="celerofinance", horizontalpodautoscaler="celerov2-model"})
+          labels:
+            severity: critical
+            app: celerov2model #label do pod da celero
+          annotations:
+            # Essas anotações serão usadas no alerta que será enviado para o slack/email/etc...
+            message: O app "celerov2model" precisa ter pelo menos "3" réplicas em execução.
+            summary: A implantação atual "celerov2model" precisa ter no mínimo pelo menos 3 réplicas em execução.
+            description: Aparentemente, há uma disparidade no número mínimo de réplicas em execução para aplicação "celerov2-model"
