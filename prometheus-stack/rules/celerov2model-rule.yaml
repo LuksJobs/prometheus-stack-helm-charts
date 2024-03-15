@@ -20,5 +20,5 @@ spec:
           annotations:
             # Essas anotações serão usadas no alerta que será enviado para o slack/email/etc...
             message: O app "celerov2model" precisa ter pelo menos "3" réplicas em execução.
-            summary: A implantação atual "celerov2model" precisa ter no mínimo pelo menos 3 réplicas em execução.
+            summary: A implantação atual "celerov2model" precisa ter no mínimo "3" réplicas em execução.
             description: Aparentemente, há uma disparidade no número mínimo de réplicas em execução para aplicação "celerov2-model"
