@@ -1,14 +1,12 @@
 apiVersion: v1
 kind: Secret
 metadata:
-  name: prometheus-slack-webhook
-  namespace: monitoring
+  name: slack-webhook
   labels:
-    release: prometheus-dev
+    release: prometheus
 type: Opaque
 stringData:
-  # token passado como chave do secrets para utilizar na configuração do alert manager "api_url"
-  slack_webhook_url: 'https://hooks.slack.com/services/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'  
+  slack_webhook_url: 'https://hooks.slack.com/services/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'
 
 ---
 
@@ -18,7 +16,7 @@ metadata:
   name: global-alert-manager-configuration
   namespace: monitoring
   labels:
-    release: prometheus-dev
+    release: prometheus
 spec:
   route:
     groupBy: ['alertname']
@@ -31,15 +29,11 @@ spec:
       - receiver: 'slack-notification'
         continue: true
   receivers:
-    - name: slack-receiver
+    - name: 'slack-notification'
       slackConfigs:
-        - channel: "grafana-dev-alerts" # nome do canal no slack para receeber as notificações
-          sendResolved: true
-          #iconEmoji: ":fire:"
-          title: "{{ range .Alerts }}{{ .Annotations.summary }}\n{{ end }}"
-          text: "<!channel> \nsummary: {{ .CommonAnnotations.summary }}\ndescription: {{ .CommonAnnotations.description }}\nmessage: {{ .CommonAnnotations.message }}"
+        - channel: 'grafana-dev-alerts'
           apiURL:
-            name: prometheus-slack-webhook
+            name: slack-webhook
             key: slack_webhook_url
-          #title: "{{ range .Alerts }}{{ .Annotations.summary }}\n{{ end }}"
-          #text: "{{ range .Alerts }}{{ .Annotations.description }}\n{{ end }}"
+          title: "{{ range .Alerts }}{{ .Annotations.summary }}\n{{ end }}"
+          text: "{{ range .Alerts }}{{ .Annotations.description }}\n{{ end }}"
